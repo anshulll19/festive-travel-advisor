@@ -1,0 +1,16 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.env/
+
+# Model artifacts (do not commit)
+*.pkl
+
+# Generated datasets
+data/processed/*.csv
+
+# OS files
+.DS_Store
