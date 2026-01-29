@@ -32,7 +32,7 @@ numerical_cols = [
 # Create a copy for encoding
 df_encoded = df.copy()
 
-# Label encode categorical columns
+# Label encode categorical columns ONLY
 label_encoders = {}
 for col in categorical_cols:
     if col in df_encoded.columns:
@@ -40,11 +40,8 @@ for col in categorical_cols:
         df_encoded[col] = le.fit_transform(df_encoded[col].astype(str))
         label_encoders[col] = le
 
-# Scale numerical features
-scaler = StandardScaler()
-df_encoded[numerical_cols] = scaler.fit_transform(df_encoded[numerical_cols])
-
-print("✅ Preprocessing completed\n")
+# DON'T scale yet - we'll scale per model
+print("✅ Label encoding completed\n")
 
 # ===============================
 # MODEL 1: RUSH LEVEL CLASSIFIER
@@ -67,6 +64,13 @@ rush_features = [
 
 X_rush = df_encoded[rush_features]
 
+# Scale features for this model
+scaler_rush = StandardScaler()
+X_rush = pd.DataFrame(
+    scaler_rush.fit_transform(X_rush),
+    columns=X_rush.columns
+)
+
 # Train-test split
 X_train_rush, X_test_rush, y_train_rush, y_test_rush = train_test_split(
     X_rush, y_rush, test_size=0.2, random_state=42, stratify=y_rush
@@ -83,6 +87,16 @@ rf_rush = RandomForestClassifier(
 )
 
 rf_rush.fit(X_train_rush, y_train_rush)
+# Save feature importance for explainability
+rush_feature_importance = {
+    "features": list(X_rush.columns),
+    "importance": rf_rush.feature_importances_.tolist()
+}
+
+import json
+with open("ml/models/rush_feature_importance.json", "w") as f:
+    json.dump(rush_feature_importance, f, indent=2)
+
 
 # Evaluate
 y_pred_rush = rf_rush.predict(X_test_rush)
@@ -117,6 +131,14 @@ confirm_features = [
 ]
 
 X_confirm = df_encoded[confirm_features]
+
+# Scale features for this model
+scaler_confirm = StandardScaler()
+X_confirm = pd.DataFrame(
+    scaler_confirm.fit_transform(X_confirm),
+    columns=X_confirm.columns
+)
+
 y_confirm = df['confirmation_probability']
 
 # Train-test split
@@ -171,6 +193,14 @@ booking_features = [
 ]
 
 X_booking = df_encoded[booking_features]
+
+# Scale features for this model
+scaler_booking = StandardScaler()
+X_booking = pd.DataFrame(
+    scaler_booking.fit_transform(X_booking),
+    columns=X_booking.columns
+)
+
 y_booking = df['optimal_booking_days']
 
 # Train-test split
@@ -208,10 +238,14 @@ joblib.dump(rf_rush, "ml/models/rush_classifier.pkl")
 joblib.dump(gb_confirm, "ml/models/confirmation_regressor.pkl")
 joblib.dump(gb_booking, "ml/models/booking_window_regressor.pkl")
 
-# Save encoders and scaler
+# Save encoders and scalers
 joblib.dump(label_encoders, "ml/models/label_encoders.pkl")
 joblib.dump(rush_encoder, "ml/models/rush_target_encoder.pkl")
-joblib.dump(scaler, "ml/models/feature_scaler.pkl")
+
+# Save individual scalers for each model
+joblib.dump(scaler_rush, "ml/models/rush_scaler.pkl")
+joblib.dump(scaler_confirm, "ml/models/confirm_scaler.pkl")
+joblib.dump(scaler_booking, "ml/models/booking_scaler.pkl")
 
 # Save feature lists
 joblib.dump(rush_features, "ml/models/rush_features.pkl")
@@ -227,5 +261,7 @@ print("  - ml/models/confirmation_regressor.pkl")
 print("  - ml/models/booking_window_regressor.pkl")
 print("  - ml/models/label_encoders.pkl")
 print("  - ml/models/rush_target_encoder.pkl")
-print("  - ml/models/feature_scaler.pkl")
+print("  - ml/models/rush_scaler.pkl")
+print("  - ml/models/confirm_scaler.pkl")
+print("  - ml/models/booking_scaler.pkl")
 print("  - ml/models/*_features.pkl")

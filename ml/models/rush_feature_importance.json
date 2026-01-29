@@ -1,0 +1,24 @@
+{
+  "features": [
+    "festival",
+    "days_before_festival",
+    "route_distance_km",
+    "source_city_tier",
+    "destination_city_tier",
+    "peak_day_proximity",
+    "train_class",
+    "train_type",
+    "historical_rush_index"
+  ],
+  "importance": [
+    0.0030767842022655137,
+    0.05616884986158772,
+    0.042293189064098714,
+    0.0,
+    0.004485057017931535,
+    0.02165551244772432,
+    0.10839968526919191,
+    0.000949754917256838,
+    0.7629711672199434
+  ]
+}

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Festive Travel Advisor - AI-Powered Railway Rush Predictions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .results {
+            margin-top: 40px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .result-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .metric {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .advice {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .advice-item {
+            margin-bottom: 15px;
+        }
+
+        .advice-item strong {
+            color: #667eea;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚂 Festive Travel Advisor</h1>
+            <p>AI-Powered Indian Railway Rush Predictions & Travel Recommendations</p>
+        </div>
+
+        <div class="main-card">
+            <form id="advisorForm">
+                <h2 style="margin-bottom: 30px; color: #667eea;">Journey Details</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="festival">🎉 Festival</label>
+                        <select id="festival" required>
+                            <option value="">Select Festival</option>
+                            <option value="Diwali">Diwali</option>
+                            <option value="Holi">Holi</option>
+                            <option value="Durga Puja">Durga Puja</option>
+                            <option value="Chhath Puja">Chhath Puja</option>
+                            <option value="Eid-ul-Fitr">Eid-ul-Fitr</option>
+                            <option value="Christmas">Christmas</option>
+                            <option value="Pongal">Pongal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="days_before">📅 Days Before Festival</label>
+                        <input type="number" id="days_before" min="1" max="120" value="30" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="source_city">📍 Source City</label>
+                        <input type="text" id="source_city" value="Delhi" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="destination_city">📍 Destination City</label>
+                        <input type="text" id="destination_city" value="Patna" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="source_tier">Source City Tier</label>
+                        <select id="source_tier" required>
+                            <option value="1">Tier 1</option>
+                            <option value="2">Tier 2</option>
+                            <option value="3">Tier 3</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dest_tier">Destination City Tier</label>
+                        <select id="dest_tier" required>
+                            <option value="1">Tier 1</option>
+                            <option value="2" selected>Tier 2</option>
+                            <option value="3">Tier 3</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="distance">🛤️ Distance (km)</label>
+                        <input type="number" id="distance" min="50" max="3000" value="1000" step="50" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="train_class">🎫 Train Class</label>
+                        <select id="train_class" required>
+                            <option value="Sleeper">Sleeper</option>
+                            <option value="3AC">3AC</option>
+                            <option value="2AC">2AC</option>
+                            <option value="1AC">1AC</option>
+                            <option value="General">General</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="train_type">🚄 Train Type</label>
+                        <select id="train_type" required>
+                            <option value="Superfast">Superfast</option>
+                            <option value="Express">Express</option>
+                            <option value="Mail">Mail</option>
+                            <option value="Passenger">Passenger</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="waitlist">🎫 Waitlist Position (0 if confirmed)</label>
+                        <input type="number" id="waitlist" min="0" max="500" value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quota">Quota</label>
+                        <select id="quota">
+                            <option value="General">General</option>
+                            <option value="Tatkal">Tatkal</option>
+                            <option value="Ladies">Ladies</option>
+                            <option value="Senior Citizen">Senior Citizen</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">
+                    🔮 Get Travel Advisory
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 20px; color: #666;">Analyzing travel patterns...</p>
+            </div>
+
+            <div class="error" id="error"></div>
+
+            <div class="results" id="results">
+                <div class="result-card">
+                    <h3>📊 Predictions</h3>
+                    <div class="metrics" id="metrics"></div>
+                </div>
+
+                <div class="result-card">
+                    <h3>💡 Recommendations</h3>
+                    <div class="advice" id="advice"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        document.getElementById('advisorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            const error = document.getElementById('error');
+
+            // Hide previous results
+            results.classList.remove('show');
+            error.classList.remove('show');
+            
+            // Show loading
+            loading.classList.add('show');
+            submitBtn.disabled = true;
+
+            const formData = {
+                festival: document.getElementById('festival').value,
+                days_before_festival: parseInt(document.getElementById('days_before').value),
+                source_city: document.getElementById('source_city').value,
+                destination_city: document.getElementById('destination_city').value,
+                source_city_tier: parseInt(document.getElementById('source_tier').value),
+                destination_city_tier: parseInt(document.getElementById('dest_tier').value),
+                route_distance_km: parseInt(document.getElementById('distance').value),
+                train_class: document.getElementById('train_class').value,
+                train_type: document.getElementById('train_type').value,
+                current_waitlist_position: parseInt(document.getElementById('waitlist').value),
+                quota: document.getElementById('quota').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/api/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayResults(data.data);
+                } else {
+                    showError(data.error || 'An error occurred');
+                }
+            } catch (err) {
+                showError('Failed to connect to API. Make sure the Flask server is running on port 8000.');
+            } finally {
+                loading.classList.remove('show');
+                submitBtn.disabled = false;
+            }
+        });
+
+        function displayResults(data) {
+            const metricsDiv = document.getElementById('metrics');
+            const adviceDiv = document.getElementById('advice');
+            const resultsDiv = document.getElementById('results');
+
+            // Display metrics
+            const rushEmoji = {
+                'High': '🔴',
+                'Medium': '🟡',
+                'Low': '🟢'
+            };
+
+            metricsDiv.innerHTML = `
+                <div class="metric">
+                    <div class="metric-label">Rush Level</div>
+                    <div class="metric-value">${rushEmoji[data.predictions.rush_level] || ''} ${data.predictions.rush_level}</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Confidence</div>
+                    <div class="metric-value">${(data.predictions.rush_confidence * 100).toFixed(0)}%</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Rush Index</div>
+                    <div class="metric-value">${data.predictions.historical_rush_index}/100</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Risk Level</div>
+                    <div class="metric-value">${data.recommendations.risk_level}</div>
+                </div>
+                ${data.predictions.confirmation_probability ? `
+                <div class="metric">
+                    <div class="metric-label">Confirmation Chance</div>
+                    <div class="metric-value">${(data.predictions.confirmation_probability * 100).toFixed(0)}%</div>
+                </div>
+                ` : ''}
+            `;
+
+            // Display advice
+            let adviceHTML = `
+                <div class="advice-item">
+                    <strong>Primary Advice:</strong><br>
+                    ${data.recommendations.primary_advice}
+                </div>
+                <div class="advice-item">
+                    <strong>Booking Timing:</strong><br>
+                    ${data.recommendations.booking_timing}
+                </div>
+            `;
+
+            if (data.recommendations.action_items.length > 0) {
+                adviceHTML += `
+                    <div class="advice-item">
+                        <strong>Action Items:</strong>
+                        <ul style="margin-top: 10px;">
+                            ${data.recommendations.action_items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            if (data.recommendations.alternatives.length > 0) {
+                adviceHTML += `
+                    <div class="advice-item">
+                        <strong>Alternatives:</strong>
+                        <ul style="margin-top: 10px;">
+                            ${data.recommendations.alternatives.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            adviceDiv.innerHTML = adviceHTML;
+            resultsDiv.classList.add('show');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+    </script>
+</body>
+</html>
