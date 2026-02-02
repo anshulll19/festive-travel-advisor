@@ -7,9 +7,7 @@ import sys
 import os
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-SRC_DIR = os.path.join(BASE_DIR, "src")
-sys.path.insert(0, SRC_DIR)
-# from advisor import FestiveTravelAdvisor
+sys.path.insert(0, BASE_DIR)
 from src.advisor import FestiveTravelAdvisor
 
 
@@ -20,7 +18,7 @@ def test_dataset_generation():
     print("="*70)
     
     try:
-        from generate_enhanced_dataset import generate_enhanced_dataset
+        from src.generate_enhanced_dataset import generate_enhanced_dataset
         df = generate_enhanced_dataset(num_samples=100)
         
         assert len(df) == 100, "Dataset should have 100 rows"
@@ -48,7 +46,9 @@ def test_model_files_exist():
         "ml/models/booking_window_regressor.pkl",
         "ml/models/label_encoders.pkl",
         "ml/models/rush_target_encoder.pkl",
-        "ml/models/feature_scaler.pkl",
+        "ml/models/rush_scaler.pkl",
+        "ml/models/confirm_scaler.pkl",
+        "ml/models/booking_scaler.pkl",
     ]
     
     all_exist = True
@@ -74,8 +74,6 @@ def test_advisor_initialization():
     print("="*70)
     
     try:
-        from advisor import FestiveTravelAdvisor
-        
         advisor = FestiveTravelAdvisor()
         print("✅ Advisor initialized successfully!")
         return True, advisor
@@ -184,10 +182,10 @@ def test_complete_advisory(advisor):
         
         print(f"✅ Complete advisory successful!")
         print(f"\n📊 Advisory Summary:")
-        print(f"   - Rush Level: {result['predictions']['rush_level']}")
-        print(f"   - Confirmation Prob: {result['predictions']['confirmation_probability']:.1%}")
-        print(f"   - Risk Level: {result['recommendations']['risk_level']}")
-        print(f"   - Primary Advice: {result['recommendations']['primary_advice']}")
+        print(f"   - Rush Level: {result['rush_analysis']['rush_level']}")
+        if result['confirmation_probability']:
+            print(f"   - Confirmation Prob: {result['confirmation_probability']:.1%}")
+        print(f"   - Recommendations: {len(result['recommendations'])} items found")
         return True
         
     except Exception as e:
