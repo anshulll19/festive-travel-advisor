@@ -330,7 +330,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:5000';
+        const API_URL = window.location.origin;
 
         document.getElementById('advisorForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -379,7 +379,7 @@
                     showError(data.error || 'An error occurred');
                 }
             } catch (err) {
-                showError('Failed to connect to API. Make sure the Flask server is running on port 8000.');
+                showError('Failed to connect to API. Make sure the Flask server is running on port 5000.');
             } finally {
                 loading.classList.remove('show');
                 submitBtn.disabled = false;
