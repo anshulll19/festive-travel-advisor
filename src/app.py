@@ -26,9 +26,9 @@ def predict():
             "days_before_festival": data.get("days_before_festival"),
             "source_city": data.get("source_city"),
             "destination_city": data.get("destination_city"),
-            "route_distance_km": data.get("route_distance_km"),
-            "source_city_tier": data.get("source_city_tier"),
-            "destination_city_tier": data.get("destination_city_tier"),
+            "route_distance_km": data.get("route_distance_km", 1000), # Default to 1000km if not provided
+            "source_city_tier": data.get("source_city_tier", 1), # Default to Tier 1
+            "destination_city_tier": data.get("destination_city_tier", 2), # Default to Tier 2
             "train_class": data.get("train_class"),
             "train_type": data.get("train_type"),
             "current_waitlist_position": data.get("current_waitlist_position", 0),
