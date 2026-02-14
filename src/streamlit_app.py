@@ -2,7 +2,6 @@ import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime, timedelta
-import requests
 from advisor import FestiveTravelAdvisor
 
 # Page configuration
