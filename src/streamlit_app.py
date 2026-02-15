@@ -169,60 +169,61 @@ st.markdown("<div class='hero-text'>Next-Gen AI Railway Intelligence & Predictiv
 with st.sidebar:
     st.markdown("## 🗺️ Journey Configuration")
     
-    with st.expander("📍 Route Information", expanded=True):
-        festival = st.selectbox(
-            "Festival",
-            ["Diwali", "Chhath Puja", "Durga Puja", "Eid-ul-Fitr", "Holi", "Christmas", "Pongal"],
-            help="Select the festival you're traveling for"
-        )
+    with st.form(key='journey_form'):
+        with st.expander("📍 Route Information", expanded=True):
+            festival = st.selectbox(
+                "Festival",
+                ["Diwali", "Chhath Puja", "Durga Puja", "Eid-ul-Fitr", "Holi", "Christmas", "Pongal"],
+                help="Select the festival you're traveling for"
+            )
 
-        days_before = st.slider(
-            "Days Before Festival",
-            min_value=1,
-            max_value=120,
-            value=20
-        )
+            days_before = st.slider(
+                "Days Before Festival",
+                min_value=1,
+                max_value=120,
+                value=20
+            )
 
-        source_city = st.text_input("From", value="Mumbai")
-        dest_city = st.text_input("To", value="Delhi")
+            source_city = st.text_input("From", value="Mumbai")
+            dest_city = st.text_input("To", value="Delhi")
 
-        distance = st.number_input(
-            "Distance (km)",
-            min_value=50,
-            max_value=5000,
-            value=1400
-        )
+            distance = st.number_input(
+                "Distance (km)",
+                min_value=50,
+                max_value=5000,
+                value=1400
+            )
 
-        col1, col2 = st.columns(2)
-        source_tier = col1.selectbox("Src Tier", [1, 2, 3])
-        dest_tier = col2.selectbox("Dst Tier", [1, 2, 3])
+            col1, col2 = st.columns(2)
+            source_tier = col1.selectbox("Src Tier", [1, 2, 3])
+            dest_tier = col2.selectbox("Dst Tier", [1, 2, 3])
 
-    with st.expander("🚄 Service Details", expanded=True):
-        train_class = st.selectbox(
-            "Class",
-            ["3AC", "2AC", "1AC", "Sleeper", "General"]
-        )
+        with st.expander("🚄 Service Details", expanded=True):
+            train_class = st.selectbox(
+                "Class",
+                ["3AC", "2AC", "1AC", "Sleeper", "General"]
+            )
 
-        train_type = st.selectbox(
-            "Train Type",
-            ["Rajdhani", "Shatabdi", "Express", "Superfast", "Mail"]
-        )
+            train_type = st.selectbox(
+                "Train Type",
+                ["Rajdhani", "Shatabdi", "Express", "Superfast", "Mail"]
+            )
 
-        quota = st.selectbox(
-            "Quota",
-            ["General", "Tatkal", "Ladies", "Senior Citizen"]
-        )
+            quota = st.selectbox(
+                "Quota",
+                ["General", "Tatkal", "Ladies", "Senior Citizen"]
+            )
 
-        waitlist = st.number_input(
-            "Waitlist Position",
-            min_value=0,
-            max_value=500,
-            value=0
-        )
+            waitlist = st.number_input(
+                "Waitlist Position",
+                min_value=0,
+                max_value=500,
+                value=0
+            )
+
+        st.markdown("---")
+        predict_button = st.form_submit_button("🔮 GENERATE SMART ADVISORY", type="primary", use_container_width=True)
     
-    st.markdown("---")
-    predict_button = st.button("🔮 ANALYZE JOURNEY", use_container_width=True)
-
     st.markdown("""
     <div style='background: rgba(96, 165, 250, 0.1); padding: 15px; border-radius: 12px; border: 1px solid rgba(96, 165, 250, 0.2); margin-top: 20px;'>
         <p style='color: #60a5fa; font-size: 0.8rem; margin: 0;'>
@@ -444,7 +445,7 @@ else:
     1. Select the festival you're traveling for
     2. Enter your source and destination cities
     3. Choose your preferred train class and type
-    4. Click "Generate Smart Advisory" to get AI-powered predictions!
+    4. Click "🔮 GENERATE SMART ADVISORY" to get AI-powered predictions!
     
     Our advanced machine learning models will analyze historical patterns and provide you with:
     - Accurate rush level predictions
